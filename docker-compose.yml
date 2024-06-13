@@ -11,9 +11,10 @@ services:
       - .:/var/www
       - ./php.ini:/usr/local/etc/php/php.ini
     ports:
-      - "9000:9000"
+      - "8000:8000"
     networks:
       - laravel
+    command: ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
 
   mysql:
     image: mysql:8.0
@@ -25,18 +26,18 @@ services:
       MYSQL_USER: laravel
       MYSQL_PASSWORD: secret
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
       - laravel
 
   node:
-    image: node:18
+    image: node:20
     container_name: nextjs
-    working_dir: /var/www
+    working_dir: /var/www/client
     volumes:
-      - .:/var/www
+      - ./client:/var/www/client
     ports:
       - "3000:3000"
     command: ["npm", "run", "dev"]

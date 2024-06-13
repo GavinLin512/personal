@@ -16,9 +16,11 @@ RUN apt-get update && apt-get install -y \
     unzip \
     git \
     curl \
-    libzip-dev \
-    nodejs \
-    npm
+    libzip-dev
+
+# 安裝 Node.js 20 和 npm
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs
 
 # 安裝 PHP 擴展
 RUN docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd zip
@@ -32,15 +34,13 @@ COPY . .
 # 安裝 Laravel 依賴
 RUN composer install
 
-# 安裝 Node.js 依賴
-RUN npm install
-
 # 設定權限
 RUN chown -R www-data:www-data /var/www \
     && chmod -R 755 /var/www
 
 # 開放端口
-EXPOSE 9000
+EXPOSE 8000
 
-# 啟動 PHP-FPM 伺服器
-CMD ["php-fpm"]
+# 啟動 Laravel 開發伺服器
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+
